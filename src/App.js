@@ -12,13 +12,15 @@ function convertToFlag(countryCode) {
 
 class App extends React.Component {
   state = {
-    location: "Kashmir",
+    location: "",
     isLoading: false,
     displayLocation: "",
     weather: {},
   };
 
   fetchWeather = async () => {
+    if (this.state.location.length < 2) return this.setState({ weather: {} });
+
     try {
       this.setState({ isLoading: true });
       // 1) Getting location (geocoding)
@@ -45,13 +47,25 @@ class App extends React.Component {
       //   console.log(weatherData.daily);
       this.setState({ weather: weatherData.daily });
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       this.setState({ isLoading: false });
     }
   };
 
   inputChangeHandler = (e) => this.setState({ location: e.target.value });
+
+  componentDidMount() {
+    this.setState({ location: localStorage.getItem("location") || "" });
+    this.fetchWeather();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.location !== prevState.location) {
+      this.fetchWeather();
+      localStorage.setItem("location", this.state.location);
+    }
+  }
 
   render() {
     return (
@@ -61,9 +75,9 @@ class App extends React.Component {
           location={this.state.location}
           onChangeInput={this.inputChangeHandler}
         />
-        <button onClick={this.fetchWeather}>Fetch Weather</button>
+
         {this.state.isLoading && <p className="loader">Loading...</p>}
-        {this.state.weather.weathercode && (
+        {this.state.weather?.weathercode && (
           <Weather
             weather={this.state.weather}
             location={this.state.displayLocation}

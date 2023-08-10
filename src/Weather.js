@@ -1,6 +1,9 @@
 import React from "react";
 import Day from "./Day";
 class Weather extends React.Component {
+  componentWillUnmount() {
+    console.log("Weather Unmounting...");
+  }
   render() {
     const {
       temperature_2m_max: max,
