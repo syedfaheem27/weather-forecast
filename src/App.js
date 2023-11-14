@@ -28,13 +28,11 @@ class App extends React.Component {
         `https://geocoding-api.open-meteo.com/v1/search?name=${this.state.location}`
       );
       const geoData = await geoRes.json();
-      //   console.log(geoData);
 
       if (!geoData.results) throw new Error("Location not found");
 
       const { latitude, longitude, timezone, name, country_code } =
         geoData.results.at(0);
-      //   console.log(`${name} ${convertToFlag(country_code)}`);
       this.setState({
         displayLocation: `${name} ${convertToFlag(country_code)}`,
       });
